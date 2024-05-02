@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <cstring>
 
 using namespace std;
 
@@ -125,6 +126,122 @@ private:
     Button button;
 };
 
+class BaseString
+{
+protected:
+    char *data;
+
+public:
+    // Default constructor
+    BaseString(const char *str = "")
+    {
+        data = new char[strlen(str) + 1];
+        strcpy(data, str);
+    }
+
+    // Copy constructor
+    BaseString(const BaseString &other)
+    {
+        data = new char[strlen(other.data) + 1];
+        strcpy(data, other.data);
+    }
+
+    // Assignment operator
+    BaseString &operator=(const BaseString &other)
+    {
+        if (this != &other)
+        {
+            delete[] data;
+            data = new char[strlen(other.data) + 1];
+            strcpy(data, other.data);
+        }
+        return *this;
+    }
+
+    // Method to output to stream
+    virtual void print(ostream &os) const
+    {
+        os << data;
+    }
+
+    // Method to read from stream
+    virtual void read(istream &is)
+    {
+        char buffer[1000];
+        is >> buffer;
+        delete[] data;
+        data = new char[strlen(buffer) + 1];
+        strcpy(data, buffer);
+    }
+
+    // Destructor to free memory
+    virtual ~BaseString()
+    {
+        delete[] data;
+    }
+};
+
+class UpperCaseString : public BaseString
+{
+public:
+    // Default constructor
+    UpperCaseString(const char *str = "") : BaseString(str)
+    {
+        for (int i = 0; i < strlen(data); i++)
+        {
+            data[i] = toupper(data[i]);
+        }
+    }
+
+    // Copy constructor
+    UpperCaseString(const UpperCaseString &other) : BaseString(other)
+    {
+        for (int i = 0; i < strlen(data); i++)
+        {
+            data[i] = toupper(data[i]);
+        }
+    }
+
+    // Assignment operator
+    UpperCaseString &operator=(const UpperCaseString &other)
+    {
+        if (this != &other)
+        {
+            BaseString::operator=(other);
+            for (int i = 0; i < strlen(data); i++)
+            {
+                data[i] = toupper(data[i]);
+            }
+        }
+        return *this;
+    }
+
+    // Overridden method to output to stream
+    void print(ostream &os) const override
+    {
+        os << data;
+    }
+
+    // Overridden method to read from stream
+    void read(istream &is) override
+    {
+        char buffer[1000];
+        is >> buffer;
+        delete[] data;
+        data = new char[strlen(buffer) + 1];
+        strcpy(data, buffer);
+        for (int i = 0; i < strlen(data); i++)
+        {
+            data[i] = toupper(data[i]);
+        }
+    }
+
+    // Destructor (automatically called by the base class)
+    ~UpperCaseString() override
+    {
+    }
+};
+
 int main()
 {
     MenuTask();
@@ -180,6 +297,25 @@ int main()
         }
         case 3: // Task 3
         {
+            UpperCaseString str1("hello");
+            UpperCaseString str2 = str1;
+            UpperCaseString str3;
+
+            cout << "Enter a string ";
+            str3.read(cin);
+
+            cout << "str1 ";
+            str1.print(cout);
+            cout << endl;
+
+            cout << "str2 ";
+            str2.print(cout);
+            cout << endl;
+
+            cout << "str3 ";
+            str3.print(cout);
+            cout << endl;
+
             choice = 4;
             break;
         }

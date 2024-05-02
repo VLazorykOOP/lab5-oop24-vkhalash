@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <cmath>
 
 using namespace std;
@@ -43,6 +43,88 @@ public:
     }
 };
 
+class Window;
+
+class Button
+{
+public:
+    // Constructor that accepts button text
+    Button(const string &text) : text(text) {}
+
+    // Method for setting a callback function
+    void setOnClick(void (Window::*onClick)())
+    {
+        this->onClick = onClick;
+    }
+
+    // Method that calls a callback function
+    void click(Window *window)
+    {
+        if (onClick != nullptr)
+        {
+            (window->*onClick)();
+        }
+    }
+
+    string getText() const
+    {
+        return text;
+    }
+
+private:
+    string text;
+    // Pointer to a callback function
+    void (Window::*onClick)() = nullptr;
+};
+
+class Title
+{
+public:
+    // Constructor that accepts the header text
+    Title(const string &text) : text(text) {}
+
+    string getText() const
+    {
+        return text;
+    }
+
+private:
+    string text;
+};
+
+class Window
+{
+public:
+    // Constructor that accepts the title text and button text
+    Window(const string &titleText, const string &buttonText) : title(titleText), button(buttonText)
+    {
+        // Callback function for the button
+        button.setOnClick(&Window::onButtonClick);
+    }
+
+    void display() const
+    {
+        cout << "Window: " << title.getText() << endl;
+        cout << "Button: " << button.getText() << endl;
+    }
+
+    void onButtonClick()
+    {
+        cout << "Button clicked" << endl;
+    }
+
+    void handleInput()
+    {
+        cout << "Press any key" << endl;
+        cin.get();
+        button.click(this);
+    }
+
+private:
+    Title title;
+    Button button;
+};
+
 int main()
 {
     MenuTask();
@@ -83,17 +165,22 @@ int main()
             cout << "B = " << t.angleB() << endl;
             cout << "C = " << t.angleC() << endl;
             cout << "Area = " << t.area() << endl;
-            choice = 3;
+
+            choice = 4;
             break;
         }
         case 2: // Task 2
         {
-            choice = 3;
+            Window window("Window", "Click");
+            window.display();
+            window.handleInput();
+
+            choice = 4;
             break;
         }
         case 3: // Task 3
         {
-            choice = 3;
+            choice = 4;
             break;
         }
         case 4: // Exit
@@ -102,7 +189,7 @@ int main()
             cout << "Invalid choice\n";
             break;
         }
-    } while (choice != 3);
+    } while (choice != 4);
 
     return 0;
 }
